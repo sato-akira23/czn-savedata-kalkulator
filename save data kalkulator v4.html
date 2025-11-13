@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CZN Save Data Calculator</title>
+    <style>
+        :root {
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --primary-text: #e0e0e0;
+            --secondary-text: #a0a0c0;
+            --border-color: #0f3460;
+            --accent-color: #e94560;
+            --safe-color: #32cd32;
+            --risk-color: #ff4500;
+            --btn-bg: #0f3460;
+            --btn-bg-hover: #194a8d;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px; 
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            padding: 24px;
+            background-color: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        header h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        
+        header p {
+            margin: 8px 0 0 0;
+            font-size: 0.9rem;
+            color: var(--secondary-text);
+            text-align: center;
+        }
+
+        main {
+            padding: 24px;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 160px;
+            gap: 16px;
+        }
+        
+        @media (min-width: 768px) {
+            #faint-memory-grid {
+                grid-template-columns: 1fr 160px 1fr 160px;
+                gap: 16px 12px;
+            }
+            
+            #faint-memory-grid .form-group:nth-child(odd) label {
+                 padding-left: 10px;
+            }
+        }
+
+        .form-group { display: contents; }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            color: var(--primary-text);
+        }
+        
+        .form-group label small {
+            font-size: 0.8rem;
+            color: var(--secondary-text);
+            margin-left: 6px;
+            font-style: italic;
+        }
+        
+        .input-stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stepper-btn {
+            background-color: var(--btn-bg);
+            border: none;
+            color: var(--primary-text);
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 42px;
+            height: 42px;
+            line-height: 42px;
+            text-align: center;
+            transition: background-color 0.2s ease;
+        }
+        
+        .stepper-btn:hover { background-color: var(--btn-bg-hover); }
+        .stepper-btn.minus { border-radius: 6px 0 0 6px; }
+        .stepper-btn.plus { border-radius: 0 6px 6px 0; }
+
+        .form-group input[type="number"] {
+            width: 70px;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--primary-text);
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            box-sizing: border-box;
+            border-radius: 0;
+            -moz-appearance: textfield;
+        }
+        
+        .form-group input::-webkit-outer-spin-button,
+        .form-group input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        .results {
+            padding: 24px;
+            background-color: rgba(0,0,0,0.2);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+        .result-row span:first-child { color: var(--secondary-text); }
+        .result-row span:last-child { font-weight: bold; font-size: 1.2rem; }
+        #limit-output { color: #4a90e2; }
+        #points-output { color: #f5a623; }
+        
+        #status-output {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        #status-output.safe { background-color: rgba(50, 205, 50, 0.15); color: var(--safe-color); }
+        #status-output.risk { background-color: rgba(255, 69, 0, 0.15); color: var(--risk-color); }
+        
+        .note {
+            font-size: 0.85rem;
+            color: var(--secondary-text);
+            font-style: italic;
+            margin-top: 16px;
+            padding: 12px;
+            background-color: var(--bg-color);
+            border-radius: 6px;
+        }
+        
+        button#reset-button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 16px; /* Diberi jarak dari rules */
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        button#reset-button:hover { background-color: #c82c44; }
+        
+        .watermark {
+            text-align: center;
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+            margin-top: 20px;
+            opacity: 0.7;
+        }
+
+        /* === PERUBAHAN BARU: CSS untuk Penjelasan Aturan === */
+        .rules-container {
+            margin-top: 24px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-color);
+            overflow: hidden; /* Untuk border-radius */
+        }
+
+        .rules-container summary {
+            padding: 14px 18px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            background-color: rgba(0,0,0,0.2);
+            cursor: pointer;
+            list-style: none; /* Hapus panah default */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Panah kustom */
+        .rules-container summary::after {
+            content: '+';
+            font-size: 1.5rem;
+            color: var(--secondary-text);
+            transition: transform 0.2s ease;
+        }
+        
+        .rules-container[open] summary::after {
+            transform: rotate(45deg);
+        }
+
+        .rules-container summary::-webkit-details-marker {
+            display: none; /* Hapus panah di Chrome/Safari */
+        }
+
+        .rules-content {
+            padding: 20px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--primary-text);
+        }
+
+        .rules-content h3 {
+            color: var(--accent-color);
+            margin-top: 12px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 4px;
+        }
+        
+        .rules-content ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .rules-content li {
+            margin-bottom: 8px;
+        }
+        
+        .rules-content code {
+            background-color: var(--bg-color);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--accent-color);
+        }
+        /* === AKHIR PERUBAHAN CSS === */
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>CZN Save Data Calculator</h1>
+            <p>Kalkulator Faint Memory Points</p>
+        </header>
+
+        <main>
+            <form id="calculator-form">
+                
+                <div class="section">
+                    <h2>Batas Poin (Point Limit)</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="run-tier">Save Data Tier (x)</label>
+                            <div class="input-stepper">
+                                <button type="button" class="stepper-btn minus" aria-label="Kurangi">-</button>
+                                <input type="number" id="run-tier" min="1" value="1" step="1">
+                                <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Biaya Poin Faint Memory</h2>
+                    <div class="form-grid" id="faint-memory-grid">
+                        
+                        <div class="form-group">
+                            <label for="neutral-cards">Neutral Cards <small>(+20)</small></label>
+                            <div class="input-stepper">
+                                <button type="button" class="stepper-btn minus" aria-label="Kurangi">-</button>
+                                <input type="number" id="neutral-cards" min="0" value="0" step="1">
+                                <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="monster-cards">Monster Cards <small>(+80)</small></label>
+                            <div class="input-stepper">
+                                <button type="button" class="stepper-btn minus" aria-label="Kurangi">-</button>
+                                <input type="number" id="monster-cards" min="0" value="0" step="1">
+                                <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="common-epiphanies">Common Epiphanies <small>(+10)</small></label>
+                            <div class="input-stepper">
+                                <button type="button" class="stepper-btn minus" aria-label="Kurangi">-</button>
+                                <input type="number" id="common-epiphanies" min="0" value="0" step="1">
+                                <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="divine-epiphanies">Divine Epiphanies <small>(+20)</small></label>
+                            <div class="input-stepper">
+                                <button type="button" class="stepper-btn minus" aria-label="Kurangi">-</button>
+                                <input type="number" id="divine-epiphanies" min="0" value="0" step="1">
+                                <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="card-conversions">Card Conversions <small>(+10)</small></label>
+                            <div class="input-stepper">
+                                <button type="button" class="stepper-btn minus" aria-label="Kurangi">-</button>
+                                <input type="number" id="card-conversions" min="0" value="0" step="1">
+                                <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="char-removals">Char Card Removals <small>(+20)</small></label>
+                            <div class="input-stepper">
+                                <button type="button" class="stepper-btn minus" aria-label="Kurangi">-</button>
+                                <input type="number" id="char-removals" min="0" value="0" step="1">
+                                <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="common-removals">Common Removals <small>(0...)</small></label>
+                            <div class="input-stepper">
+                                <button type="button" class="stepper-btn minus" aria-label="Kurangi">-</button>
+                                <input type="number" id="common-removals" min="0" value="0" step="1">
+                                <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="card-duplications">Card Duplications <small>(0...)</small></label>
+                            <div class="input-stepper">
+                                <button type="button" class="stepper-btn minus" aria-label="Kurangi">-</button>
+                                <input type="number" id="card-duplications" min="0" value="0" step="1">
+                                <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <div class="note">
+                        <strong>Catatan Asumsi:</strong> Biaya kumulatif ke-5+ (Removal/Dupe) adalah +70. Monster Card +80. Char Card Removal +20 (flat).
+                    </div>
+                </div>
+                
+                
+                <details class="rules-container">
+                    <summary>Penjelasan Aturan / Rules Guide</summary>
+                    <div class="rules-content">
+                        Kalkulator ini membantu Anda menghitung poin <strong>Faint Memory</strong>. Jika total poin Anda (Total Poin Faint Memory) melebihi batas (Batas Poin Anda), game akan menghapus data *run* Anda secara acak hingga poinnya di bawah batas.
+                        
+                        <h3>Tipe Memori</h3>
+                        <ul>
+                            <li><strong>Vivid Memories (Pasti Tersimpan):</strong> Equipment, Epiphany Kartu Karakter (Starting/Unique), dan Unique Card. Ini <strong>TIDAK</strong> dihitung dan <strong>PASTI</strong> aman.</li>
+                            <li><strong>Unrecognizable Memories (Tidak Tersimpan):</strong> Fates (modifier di awal lantai) tidak disimpan.</li>
+                            <li><strong>Faint Memories (Berisiko):</strong> Ini adalah semua yang dihitung oleh kalkulator ini.</li>
+                        </ul>
+                        
+                        <h3>Perhitungan Poin</h3>
+                        
+                        <strong>1. Batas Poin (Point Limit)</strong>
+                        <br>
+                        Batas poin Anda dihitung berdasarkan <strong>Save Data Tier (x)</strong>.
+                        <ul>
+                            <li>Rumus: <code>30 + 10 * (x - 1)</code></li>
+                            <li>Tier 1 = 30 Poin, Tier 2 = 40 Poin, Tier 3 = 50 Poin, dst.</li>
+                        </ul>
+
+                        <strong>2. Biaya Poin (Faint Memory)</strong>
+                        <ul>
+                            <li><strong>Neutral Cards:</strong> <code>+20 Poin</code></li>
+                            <li><strong>Monster Cards:</strong> <code>+80 Poin</code></li>
+                            <li><strong>Common Epiphanies:</strong> <code>+10 Poin</code> (Epiphany pada Neutral/Monster card)</li>
+                            <li><strong>Divine Epiphanies:</strong> <code>+20 Poin</code></li>
+                            <li><strong>Card Conversions:</strong> <code>+10 Poin</code></li>
+                            <li><strong>Character Card Removals:</strong> <code>+20 Poin</code></li>
+                            <li><strong>Common Removals & Duplications:</strong> Biayanya kumulatif dan naik terus.
+                                <ul>
+                                    <li>Aksi ke-1: <code>0 Poin</code></li>
+                                    <li>Aksi ke-2: <code>+10 Poin</code></li>
+                                    <li>Aksi ke-3: <code>+30 Poin</code></li>
+                                    <li>Aksi ke-4: <code>+50 Poin</code></li>
+                                    <li>Aksi ke-5+: <code>+70 Poin</code> (per aksi)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Gratis (0 Poin):</strong> Forbidden Neutral Card dan Epiphany pada Kartu Karakter.</li>
+                        </ul>
+                    </div>
+                </details>
+                <button type="button" id="reset-button">Reset Kalkulator</button>
+                
+                <p class="watermark">by RHOEN23</p>
+
+            </form>
+        </main>
+
+        <div class="results">
+            <div class="result-row">
+                <span>Batas Poin Anda:</span>
+                <span id="limit-output">30</span>
+            </div>
+            <div class="result-row">
+                <span>Total Poin Faint Memory:</span>
+                <span id="points-output">0</span>
+            </div>
+            
+            <div id="status-output" class="safe">
+                STATUS: AMAN
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('calculator-form');
+            const resetButton = document.getElementById('reset-button');
+            
+            const runTierInput = document.getElementById('run-tier');
+            const neutralInput = document.getElementById('neutral-cards');
+            const monsterInput = document.getElementById('monster-cards');
+            const commonEpiphanyInput = document.getElementById('common-epiphanies');
+            const divineEpiphanyInput = document.getElementById('divine-epiphanies');
+            const conversionInput = document.getElementById('card-conversions');
+            const charRemovalInput = document.getElementById('char-removals');
+            const commonRemovalInput = document.getElementById('common-removals');
+            const duplicationInput = document.getElementById('card-duplications');
+
+            const limitOutput = document.getElementById('limit-output');
+            const pointsOutput = document.getElementById('points-output');
+            const statusOutput = document.getElementById('status-output');
+            
+            const cumulativeCosts = [0, 10, 30, 50, 70];
+            
+            function getCumulativeCost(count) {
+                let total = 0;
+                for (let i = 1; i <= count; i++) {
+                    const costIndex = Math.min(i - 1, cumulativeCosts.length - 1);
+                    total += cumulativeCosts[costIndex];
+                }
+                return total;
+            }
+
+            function calculate() {
+                const tier = parseInt(runTierInput.value) || 1;
+                const neutral = parseInt(neutralInput.value) || 0;
+                const monster = parseInt(monsterInput.value) || 0;
+                const commonEpiphany = parseInt(commonEpiphanyInput.value) || 0;
+                const divineEpiphany = parseInt(divineEpiphanyInput.value) || 0;
+                const conversion = parseInt(conversionInput.value) || 0;
+                const charRemoval = parseInt(charRemovalInput.value) || 0;
+                const commonRemoval = parseInt(commonRemovalInput.value) || 0;
+                const duplication = parseInt(duplicationInput.value) || 0;
+                
+                const pointLimit = 30 + 10 * (Math.max(1, tier) - 1);
+                
+                let totalPoints = 0;
+                totalPoints += neutral * 20;
+                totalPoints += monster * 80;
+                totalPoints += commonEpiphany * 10;
+                totalPoints += divineEpiphany * 20;
+                totalPoints += conversion * 10;
+                totalPoints += charRemoval * 20;
+                totalPoints += getCumulativeCost(commonRemoval);
+                totalPoints += getCumulativeCost(duplication);
+
+                limitOutput.textContent = pointLimit;
+                pointsOutput.textContent = totalPoints;
+                
+                if (totalPoints <= pointLimit) {
+                    statusOutput.textContent = 'STATUS: AMAN';
+                    statusOutput.className = 'safe';
+                } else {
+                    statusOutput.textContent = 'STATUS: BERISIKO';
+                    statusOutput.className = 'risk';
+                }
+            }
+            
+            form.addEventListener('input', calculate);
+            
+            form.addEventListener('click', (e) => {
+                if (e.target.matches('.stepper-btn')) {
+                    const input = e.target.parentElement.querySelector('input[type="number"]');
+                    if (!input) return;
+                    let value = parseInt(input.value) || 0;
+                    const min = parseInt(input.min);
+                    if (e.target.matches('.plus')) {
+                        value++;
+                    } else if (e.target.matches('.minus')) {
+                        value = Math.max(min, value - 1);
+                    }
+                    input.value = value;
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            });
+            
+            resetButton.addEventListener('click', () => {
+                form.reset();
+                runTierInput.value = 1;
+                const inputs = form.querySelectorAll('input[type="number"]');
+                inputs.forEach(input => {
+                    if (input.id !== 'run-tier') {
+                        input.value = 0;
+                    }
+                });
+                calculate();
+            });
+
+            calculate();
+        });
+    </script>
+
+</body>
+</html>
