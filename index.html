@@ -6,16 +6,15 @@
     <title>CZN Save Data Calculator</title>
     <style>
         :root {
-            --bg-color: #1a1a2e;
-            --card-bg: #16213e;
-            --primary-text: #e0e0e0;
-            --secondary-text: #a0a0c0;
-            --border-color: #0f3460;
-            --accent-color: #e94560;
-            --safe-color: #32cd32;
-            --risk-color: #ff4500;
-            --btn-bg: #0f3460;
-            --btn-bg-hover: #194a8d;
+            --bg-color: #202124;       /* Abu-abu gelap (background) */
+            --card-bg: #2d2e30;       /* Abu-abu kartu */
+            --primary-text: #e8eaed;  /* Putih gading */
+            --secondary-text: #9aa0a6; /* Abu-abu teks */
+            --border-color: #3c4043;   /* Border halus */
+            --accent-color: #e74c3c;   /* Merah (Judul, Tombol, Over) */
+            --safe-color: #2ecc71;     /* Hijau (Aman) */
+            --btn-bg: #4a4a4f;         /* Tombol +/- */
+            --btn-bg-hover: #5f6368;   /* Tombol +/- hover */
         }
 
         body {
@@ -23,109 +22,144 @@
             background-color: var(--bg-color);
             color: var(--primary-text);
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            padding: 20px; /* Padding sedikit dikurangi biar muat lebih banyak */
+            font-size: 17px; /* PERUBAHAN: Base font lebih besar */
         }
 
         .container {
             width: 100%;
-            max-width: 900px; 
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px; /* Gap disesuaikan */
+        }
+
+        /* Kolom Kiri */
+        .calculator-main {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* Kolom Kanan (Sidebar) */
+        .calculator-sidebar {
+            position: sticky;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: fit-content;
+        }
+
+        .card {
             background-color: var(--card-bg);
             border-radius: 12px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
 
+        /* === Header === */
         header {
-            padding: 24px;
-            background-color: rgba(0,0,0,0.2);
-            border-bottom: 1px solid var(--border-color);
+            padding: 20px 24px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
         }
 
         header h1 {
             margin: 0;
-            color: #ffffff;
-            font-size: 1.5rem;
-            text-align: center;
+            color: var(--primary-text);
+            font-size: 2rem; /* PERUBAHAN: Judul lebih besar */
+            text-align: left;
         }
         
         header p {
-            margin: 8px 0 0 0;
-            font-size: 0.9rem;
+            margin: 6px 0 0 0;
+            font-size: 1rem;
             color: var(--secondary-text);
-            text-align: center;
+            text-align: left;
         }
-
-        main {
-            padding: 24px;
+        
+        .watermark {
+            text-align: left;
+            color: var(--secondary-text);
+            font-size: 0.95rem;
+            margin-top: 8px;
+            opacity: 0.7;
         }
 
         .section {
-            margin-bottom: 24px;
+            padding: 24px;
         }
-
+        
         .section h2 {
             margin-top: 0;
-            margin-bottom: 16px;
+            margin-bottom: 0px;
             color: var(--accent-color);
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 8px;
-            font-size: 1.2rem;
+            font-size: 1.4rem; /* PERUBAHAN: Sub-judul lebih besar */
         }
 
+        /* Grid Input */
         .form-grid {
             display: grid;
-            grid-template-columns: 1fr 160px;
+            grid-template-columns: 1fr;
             gap: 16px;
         }
         
         @media (min-width: 768px) {
-            #faint-memory-grid {
-                grid-template-columns: 1fr 160px 1fr 160px;
-                gap: 16px 12px;
-            }
-            
-            #faint-memory-grid .form-group:nth-child(odd) label {
-                 padding-left: 10px;
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px 24px; /* Jarak antar kolom lebih lega */
             }
         }
+        
+        .form-grid-single {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
 
-        .form-group { display: contents; }
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-color);
+            padding: 10px 14px; /* Padding sedikit ditambah */
+            border-radius: 8px;
+        }
 
         .form-group label {
             display: flex;
-            align-items: center;
-            font-size: 1rem;
+            flex-direction: column;
+            font-size: 1.1rem; /* PERUBAHAN: Font label lebih besar */
             color: var(--primary-text);
+            font-weight: 500;
         }
         
         .form-group label small {
-            font-size: 0.8rem;
+            font-size: 0.85rem; /* Small text juga diperbesar sedikit */
             color: var(--secondary-text);
-            margin-left: 6px;
-            font-style: italic;
+            margin-top: 4px;
+            font-weight: normal;
         }
         
+        /* Stepper Buttons & Input */
         .input-stepper {
             display: flex;
             align-items: center;
-            justify-content: center;
         }
 
         .stepper-btn {
             background-color: var(--btn-bg);
-            border: none;
+            border: 1px solid var(--border-color);
             color: var(--primary-text);
-            font-size: 1.2rem;
+            font-size: 1.4rem; /* PERUBAHAN: Simbol +/- lebih besar */
             font-weight: bold;
             cursor: pointer;
-            width: 42px;
+            width: 42px;  /* Tombol lebih besar */
             height: 42px;
-            line-height: 42px;
+            line-height: 40px;
             text-align: center;
             transition: background-color 0.2s ease;
         }
@@ -134,172 +168,232 @@
         .stepper-btn.minus { border-radius: 6px 0 0 6px; }
         .stepper-btn.plus { border-radius: 0 6px 6px 0; }
 
-        .form-group input[type="number"] {
-            width: 70px;
-            padding: 10px;
+        input[type="number"] {
+            width: 60px; /* Input lebih lebar */
+            height: 42px; /* Input lebih tinggi */
+            padding: 0;
             background-color: var(--bg-color);
             border: 1px solid var(--border-color);
+            border-left: none;
+            border-right: none;
             color: var(--primary-text);
-            font-size: 1rem;
+            font-size: 1.3rem; /* PERUBAHAN: Angka input jauh lebih besar */
             font-weight: bold;
             text-align: center;
             box-sizing: border-box;
-            border-radius: 0;
             -moz-appearance: textfield;
         }
-        
-        .form-group input::-webkit-outer-spin-button,
-        .form-group input::-webkit-inner-spin-button {
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
           -webkit-appearance: none;
           margin: 0;
         }
 
-        .results {
-            padding: 24px;
-            background-color: rgba(0,0,0,0.2);
-            border-top: 1px solid var(--border-color);
-        }
-
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-        }
-        .result-row span:first-child { color: var(--secondary-text); }
-        .result-row span:last-child { font-weight: bold; font-size: 1.2rem; }
-        #limit-output { color: #4a90e2; }
-        #points-output { color: #f5a623; }
-        
-        #status-output {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            padding: 16px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        #status-output.safe { background-color: rgba(50, 205, 50, 0.15); color: var(--safe-color); }
-        #status-output.risk { background-color: rgba(255, 69, 0, 0.15); color: var(--risk-color); }
-        
         .note {
-            font-size: 0.85rem;
+            font-size: 0.95rem; /* Note lebih terbaca */
             color: var(--secondary-text);
             font-style: italic;
-            margin-top: 16px;
-            padding: 12px;
+            margin-top: 24px;
+            padding: 14px;
             background-color: var(--bg-color);
             border-radius: 6px;
-        }
-        
-        button#reset-button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 16px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-        button#reset-button:hover { background-color: #c82c44; }
-        
-        .watermark {
-            text-align: center;
-            color: var(--secondary-text);
-            font-size: 0.9rem;
-            margin-top: 20px;
-            opacity: 0.7;
+            line-height: 1.5;
         }
 
+        /* === Rules (Dipindah ke Atas) === */
         .rules-container {
-            margin-top: 24px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--accent-color); /* Border merah agar mencolok */
             border-radius: 8px;
-            background-color: var(--bg-color);
+            background-color: var(--card-bg);
             overflow: hidden;
         }
-
         .rules-container summary {
-            padding: 14px 18px;
-            font-size: 1.1rem;
+            padding: 16px 20px;
+            font-size: 1.15rem; /* Font summary lebih besar */
             font-weight: bold;
-            color: var(--accent-color);
-            background-color: rgba(0,0,0,0.2);
+            color: var(--primary-text);
+            background-color: rgba(231, 76, 60, 0.1); /* Tint merah dikit biar sadar itu penting */
             cursor: pointer;
             list-style: none;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
         .rules-container summary::after {
             content: '+';
-            font-size: 1.5rem;
-            color: var(--secondary-text);
+            font-size: 1.6rem;
+            color: var(--accent-color);
             transition: transform 0.2s ease;
         }
-        
+        .rules-container[open] summary {
+            border-bottom: 1px solid var(--border-color);
+        }
         .rules-container[open] summary::after {
             transform: rotate(45deg);
         }
-
-        .rules-container summary::-webkit-details-marker {
-            display: none;
-        }
-
+        .rules-container summary::-webkit-details-marker { display: none; }
+        
         .rules-content {
-            padding: 20px;
-            font-size: 0.95rem;
+            padding: 24px;
+            font-size: 1rem; /* Isi rules lebih besar */
             line-height: 1.6;
-            color: var(--primary-text);
         }
-
         .rules-content h3 {
             color: var(--accent-color);
-            margin-top: 12px;
-            margin-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 4px;
+            margin-top: 16px;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
         }
-        
-        .rules-content ul {
-            padding-left: 20px;
-            margin: 0;
-        }
-        
-        .rules-content li {
-            margin-bottom: 8px;
-        }
-        
+        .rules-content ul { padding-left: 20px; margin: 0; }
+        .rules-content li { margin-bottom: 10px; }
         .rules-content code {
             background-color: var(--bg-color);
-            padding: 2px 5px;
+            padding: 4px 8px;
             border-radius: 4px;
             font-family: monospace;
             color: var(--accent-color);
+            font-size: 1rem;
         }
 
+        /* === Sidebar Hasil === */
+        .results {
+            padding: 24px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            font-size: 1.15rem;
+        }
+        .result-row span:first-child { color: var(--secondary-text); }
+        .result-row span:last-child { font-weight: bold; font-size: 1.3rem; }
+        #limit-output { color: #81c995; }
+        #points-output { color: #f5a623; }
+        
+        .progress-bar-container {
+            width: 100%;
+            height: 12px; /* Progress bar sedikit lebih tebal */
+            background-color: var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 8px;
+            margin-bottom: 24px;
+        }
+        
+        #progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background-color: var(--safe-color);
+            border-radius: 6px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        #status-output {
+            text-align: center;
+            font-size: 2rem; /* Status SANGAT JELAS */
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        #status-output.safe { background-color: rgba(46, 204, 113, 0.15); color: var(--safe-color); }
+        #status-output.risk { background-color: rgba(231, 76, 60, 0.15); color: var(--accent-color); }
+        
+        button#reset-button {
+            width: 100%;
+            padding: 18px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem; /* Tombol font lebih besar */
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        button#reset-button:hover { background-color: #c0392b; }
+        
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .calculator-sidebar {
+                position: static;
+                order: -1; /* Hasil tetap di atas input pada mobile */
+            }
+            /* Pada mobile, rules dipindah ke bawah input agar tidak menuh-menuhin layar atas */
+            .calculator-main {
+                 /* Ini trik flexbox untuk mengubah urutan visual di mobile jika diinginkan */
+                 /* Tapi defaultnya biarkan di atas sesuai request user desktop */
+            }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <header>
-            <h1>CZN Save Data Calculator</h1>
-            <p>Kalkulator Faint Memory Points</p>
-        </header>
+        
+        <div class="calculator-main">
+            
+            <header>
+                <h1>CZN Save Data Calculator</h1>
+                <p>Kalkulator Faint Memory Points</p>
+                <p class="watermark">by RHOEN23</p>
+            </header>
 
-        <main>
-            <form id="calculator-form">
-                
+            <details class="rules-container">
+                <summary>Klik untuk Baca Aturan / Rules Guide</summary>
+                <div class="rules-content">
+                    Kalkulator ini membantu Anda menghitung poin <strong>Faint Memory</strong>. Jika total poin (Total Poin Faint Memory) melebihi batas (Batas Poin), game akan mengubah *Save Data* secara acak hingga poinnya di bawah batas.
+                    <h3>Tipe Memori</h3>
+                    <ul>
+                        <li><strong>Vivid Memories (Pasti Tersimpan):</strong> Equipment, Epiphany Kartu Karakter (Starting/Unique), dan Unique Card. Ini <strong>TIDAK</strong> dihitung dan <strong>PASTI</strong> aman.</li>
+                        <li><strong>Unrecognizable Memories (Tidak Tersimpan):</strong> Fates (modifier di awal lantai) tidak disimpan.</li>
+                        <li><strong>Faint Memories (Berisiko):</strong> Ini adalah semua yang dihitung oleh kalkulator ini.</li>
+                    </ul>
+                    <h3>Perhitungan Poin</h3>
+                    <strong>1. Batas Poin (Point Limit)</strong><br>
+                    Batas poin Anda dihitung berdasarkan <strong>Save Data Tier (x)</strong>.
+                    <ul>
+                        <li>Rumus: <code>30 + 10 * (x - 1)</code></li>
+                        <li>Tier 1 = 30 Poin, Tier 2 = 40 Poin, Tier 3 = 50 Poin, dst.</li>
+                    </ul>
+                    <strong>2. Biaya Poin (Faint Memory)</strong>
+                    <ul>
+                        <li><strong>Neutral Cards:</strong> <code>+20 Poin</code></li>
+                        <li><strong>Monster Cards:</strong> <code>+80 Poin</code></li>
+                        <li><strong>Common Epiphanies:</strong> <code>+10 Poin</code> (Epiphany pada Neutral/Monster card)</li>
+                        <li><strong>Divine Epiphanies:</strong> <code>+20 Poin</code></li>
+                        <li><strong>Card Conversions:</strong> <code>+10 Poin</code></li>
+                        <li><strong>Common Removals & Duplications:</strong> Biayanya kumulatif (dihitung terpisah).
+                            <ul>
+                                <li>Aksi ke-1: <code>0 Poin</code></li>
+                                <li>Aksi ke-2: <code>+10 Poin</code></li>
+                                <li>Aksi ke-3: <code>+30 Poin</code></li>
+                                <li>Aksi ke-4: <code>+50 Poin</code></li>
+                                <li>Aksi ke-5+: <code>+70 Poin</code> (per aksi)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Character Card Removals:</strong> Biaya kumulatif <strong>DITAMBAH 20</strong> di tiap tingkat.
+                            <ul>
+                                <li>Aksi ke-1: <code>0 + 20 = 20 Poin</code></li>
+                                <li>Aksi ke-2: <code>10 + 20 = 30 Poin</code></li>
+                                <li>Aksi ke-3: <code>30 + 20 = 50 Poin</code></li>
+                                <li>Aksi ke-4: <code>50 + 20 = 70 Poin</code></li>
+                                <li>Aksi ke-5+: <code>70 + 20 = 90 Poin</code> (per aksi)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Gratis (0 Poin):</strong> Forbidden Neutral Card dan Epiphany pada Kartu Karakter.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <form id="calculator-form" class="card">
                 <div class="section">
                     <h2>Batas Poin (Point Limit)</h2>
-                    <div class="form-grid">
+                    <div class="form-grid-single">
                         <div class="form-group">
                             <label for="run-tier">Save Data Tier (x)</label>
                             <div class="input-stepper">
@@ -311,7 +405,7 @@
                     </div>
                 </div>
 
-                <div class="section">
+                <div class="section" style="padding-top: 0;">
                     <h2>Biaya Poin Faint Memory</h2>
                     <div class="form-grid" id="faint-memory-grid">
                         
@@ -331,7 +425,6 @@
                                 <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
                             </div>
                         </div>
-                        
                         <div class="form-group">
                             <label for="common-epiphanies">Common Epiphanies <small>(+10)</small></label>
                             <div class="input-stepper">
@@ -348,7 +441,6 @@
                                 <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label for="card-conversions">Card Conversions <small>(+10)</small></label>
                             <div class="input-stepper">
@@ -365,7 +457,6 @@
                                 <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label for="common-removals">Common Removals <small>(0...)</small></label>
                             <div class="input-stepper">
@@ -382,95 +473,41 @@
                                 <button type="button" class="stepper-btn plus" aria-label="Tambah">+</button>
                             </div>
                         </div>
-
                     </div>
                     
                     <div class="note">
-                        <strong>Catatan Asumsi:</strong>
-                        <ul>
-                            <li><strong>Monster Card:</strong> <code>+80 Poin</code>.</li>
-                            <li><strong>Common Removal/Dupe:</strong> Biaya ke-5+ adalah <code>+70 Poin</code>.</li>
-                            <li><strong>Char Card Removal:</strong> Biaya kumulatif (0/10/30...) <code>+ 20 Poin</code> per aksi.</li>
-                        </ul>
+                        <strong>Catatan Asumsi:</strong> Biaya kumulatif ke-5+ (Removal/Dupe) adalah +70. Monster Card +80. Char Card Removal = Biaya kumulatif (0/10/30...) + 20 Poin per aksi.
                     </div>
                 </div>
-                
-                
-                <details class="rules-container">
-                    <summary>Penjelasan Aturan / Rules Guide</summary>
-                    <div class="rules-content">
-                        Kalkulator ini membantu Anda menghitung poin <strong>Faint Memory</strong>. Jika total poin Anda (Total Poin Faint Memory) melebihi batas (Batas Poin Anda), game akan menghapus data *run* Anda secara acak hingga poinnya di bawah batas.
-                        
-                        <h3>Tipe Memori</h3>
-                        <ul>
-                            <li><strong>Vivid Memories (Pasti Tersimpan):</strong> Equipment, Epiphany Kartu Karakter (Starting/Unique), dan Unique Card. Ini <strong>TIDAK</strong> dihitung dan <strong>PASTI</strong> aman.</li>
-                            <li><strong>Unrecognizable Memories (Tidak Tersimpan):</strong> Fates (modifier di awal lantai) tidak disimpan.</li>
-                            <li><strong>Faint Memories (Berisiko):</strong> Ini adalah semua yang dihitung oleh kalkulator ini.</li>
-                        </ul>
-                        
-                        <h3>Perhitungan Poin</h3>
-                        
-                        <strong>1. Batas Poin (Point Limit)</strong>
-                        <br>
-                        Batas poin Anda dihitung berdasarkan <strong>Save Data Tier (x)</strong>.
-                        <ul>
-                            <li>Rumus: <code>30 + 10 * (x - 1)</code></li>
-                            <li>Tier 1 = 30 Poin, Tier 2 = 40 Poin, Tier 3 = 50 Poin, dst.</li>
-                        </ul>
-
-                        <strong>2. Biaya Poin (Faint Memory)</strong>
-                        <ul>
-                            <li><strong>Neutral Cards:</strong> <code>+20 Poin</code></li>
-                            <li><strong>Monster Cards:</strong> <code>+80 Poin</code></li>
-                            <li><strong>Common Epiphanies:</strong> <code>+10 Poin</code> (Epiphany pada Neutral/Monster card)</li>
-                            <li><strong>Divine Epiphanies:</strong> <code>+20 Poin</code></li>
-                            <li><strong>Card Conversions:</strong> <code>+10 Poin</code></li>
-                            
-                            <li><strong>Common Removals & Duplications:</strong> Biayanya kumulatif (dihitung terpisah).
-                                <ul>
-                                    <li>Aksi ke-1: <code>0 Poin</code></li>
-                                    <li>Aksi ke-2: <code>+10 Poin</code></li>
-                                    <li>Aksi ke-3: <code>+30 Poin</code></li>
-                                    <li>Aksi ke-4: <code>+50 Poin</code></li>
-                                    <li>Aksi ke-5+: <code>+70 Poin</code> (per aksi)</li>
-                                </ul>
-                            </li>
-                            <li><strong>Character Card Removals:</strong> Biaya kumulatif <strong>DITAMBAH 20</strong> di tiap tingkat.
-                                <ul>
-                                    <li>Aksi ke-1: <code>0 + 20 = 20 Poin</code></li>
-                                    <li>Aksi ke-2: <code>10 + 20 = 30 Poin</code></li>
-                                    <li>Aksi ke-3: <code>30 + 20 = 50 Poin</code></li>
-                                    <li>Aksi ke-4: <code>50 + 20 = 70 Poin</code></li>
-                                    <li>Aksi ke-5+: <code>70 + 20 = 90 Poin</code> (per aksi)</li>
-                                </ul>
-                            </li>
-                            <li><strong>Gratis (0 Poin):</strong> Forbidden Neutral Card dan Epiphany pada Kartu Karakter.</li>
-                        </ul>
-                    </div>
-                </details>
-                
-                
-                <button type="button" id="reset-button">Reset Kalkulator</button>
-                
-                <p class="watermark">by RHOEN23</p>
-
             </form>
-        </main>
-
-        <div class="results">
-            <div class="result-row">
-                <span>Batas Poin Anda:</span>
-                <span id="limit-output">30</span>
-            </div>
-            <div class="result-row">
-                <span>Total Poin Faint Memory:</span>
-                <span id="points-output">0</span>
+            
+        </div>
+        
+        <div class="calculator-sidebar">
+            
+            <div class="results card">
+                <div class="result-row">
+                    <span>Batas Poin:</span>
+                    <span id="limit-output">30</span>
+                </div>
+                <div class="result-row">
+                    <span>Total Poin Faint Memory:</span>
+                    <span id="points-output">0</span>
+                </div>
+                
+                <div class="progress-bar-container">
+                    <div id="progress-bar-fill"></div>
+                </div>
+                
+                <div id="status-output" class="safe">
+                    STATUS: AMAN
+                </div>
             </div>
             
-            <div id="status-output" class="safe">
-                STATUS: AMAN
-            </div>
+            <button type="button" id="reset-button">Reset Kalkulator</button>
+
         </div>
+
     </div>
 
     <script>
@@ -491,28 +528,25 @@
             const limitOutput = document.getElementById('limit-output');
             const pointsOutput = document.getElementById('points-output');
             const statusOutput = document.getElementById('status-output');
+            const progressBar = document.getElementById('progress-bar-fill');
             
-            // Daftar biaya dasar kumulatif
             const cumulativeCosts = [0, 10, 30, 50, 70];
             
-            // Fungsi untuk Common Removal / Duplication
             function getCumulativeCost(count) {
                 let total = 0;
                 for (let i = 1; i <= count; i++) {
-                    // Tentukan biaya dasar, ambil 70 jika lebih dari 5 aksi
                     const costIndex = Math.min(i - 1, cumulativeCosts.length - 1);
                     total += cumulativeCosts[costIndex];
                 }
                 return total;
             }
             
-            // FUNGSI BARU: Untuk Char Card Removal (biaya dasar + 20 per aksi)
             function getCumulativeCostChar(count) {
                 let total = 0;
                 for (let i = 1; i <= count; i++) {
                     const costIndex = Math.min(i - 1, cumulativeCosts.length - 1);
                     let baseCost = cumulativeCosts[costIndex];
-                    total += (baseCost + 20); // Biaya dasar + 20 poin
+                    total += (baseCost + 20);
                 }
                 return total;
             }
@@ -528,45 +562,40 @@
                 const commonRemoval = parseInt(commonRemovalInput.value) || 0;
                 const duplication = parseInt(duplicationInput.value) || 0;
                 
-                // 2. Hitung Point Limit
                 const pointLimit = 30 + 10 * (Math.max(1, tier) - 1);
                 
-                // 3. Hitung Total Faint Memory Points
                 let totalPoints = 0;
                 totalPoints += neutral * 20;
                 totalPoints += monster * 80;
                 totalPoints += commonEpiphany * 10;
                 totalPoints += divineEpiphany * 20;
                 totalPoints += conversion * 10;
-                
-                // --- PERUBAHAN LOGIKA DI SINI ---
-                // Menggunakan fungsi baru untuk Char Removal
                 totalPoints += getCumulativeCostChar(charRemoval);
-                // ---
-                
-                // Menggunakan fungsi lama untuk Common Removal & Duplication
                 totalPoints += getCumulativeCost(commonRemoval);
                 totalPoints += getCumulativeCost(duplication);
-                // --- AKHIR PERUBAHAN LOGIKA ---
 
-                // 4. Update UI
                 limitOutput.textContent = pointLimit;
                 pointsOutput.textContent = totalPoints;
                 
-                // 5. Update Status
+                let percent = (pointLimit > 0) ? (totalPoints / pointLimit) * 100 : 0;
+                
                 if (totalPoints <= pointLimit) {
                     statusOutput.textContent = 'STATUS: AMAN';
                     statusOutput.className = 'safe';
+                    progressBar.style.backgroundColor = 'var(--safe-color)';
+                    progressBar.style.width = Math.min(percent, 100) + '%';
                 } else {
-                    statusOutput.textContent = 'STATUS: BERISIKO';
+                    statusOutput.textContent = 'STATUS: OVER';
                     statusOutput.className = 'risk';
+                    progressBar.style.backgroundColor = 'var(--accent-color)';
+                    progressBar.style.width = '100%';
                 }
             }
             
-            // Event listener (Tidak berubah)
-            form.addEventListener('input', calculate);
+            const mainForm = document.querySelector('.calculator-main');
+            mainForm.addEventListener('input', calculate);
             
-            form.addEventListener('click', (e) => {
+            mainForm.addEventListener('click', (e) => {
                 if (e.target.matches('.stepper-btn')) {
                     const input = e.target.parentElement.querySelector('input[type="number"]');
                     if (!input) return;
